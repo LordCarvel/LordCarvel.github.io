@@ -28,7 +28,7 @@ Quando eu ficar em dúvida sobre alguma decisão, volto aqui.
 2. **O site não pode depender da API.** Se o backend cair, cada recurso tem um plano B local.
 3. **Texto só em `src/data`.** Nunca escrever conteúdo direto num componente.
 4. **Todo texto já nasce em `{ pt, en }`.** O inglês pode ficar provisório, mas a estrutura vem desde o começo, para eu não ter que caçar texto depois.
-5. **Cor só por variável CSS.** Nenhuma cor fixa fora de `:root` e dos temas.
+5. **Cor só por variável CSS.** Nenhuma cor fixa fora do `@theme` e dos temas. Nada de `bg-[#101610]` ou `text-green-400` num componente: só as cores do tema (`bg-bg`, `text-accent`…).
 6. **O essencial fica no HTML.** Nome, cargo, resumo e tags `og:` no `index.html`, para o LinkedIn, o WhatsApp e o Google lerem sem rodar JS.
 7. **Mostrar o que eu sei, não o que falta.** Nada no site lista o que eu ainda não domino.
 8. **Ser honesto nas demos.** Se algo for simulação, a página diz que é e aponta para o código real.
@@ -52,7 +52,9 @@ Quando eu ficar em dúvida sobre alguma decisão, volto aqui.
 
 ### O front
 
-**Stack:** Vite + React + TypeScript, ESLint e Vitest. O deploy é pelo GitHub Actions no GitHub Pages.
+**Stack:** Vite + React + TypeScript, Tailwind CSS v4, ESLint e Vitest. O deploy é pelo GitHub Actions no GitHub Pages.
+
+**Estilo com Tailwind:** uso o plugin `@tailwindcss/vite`, sem `tailwind.config.js`; a configuração fica no CSS. As cores do tema padrão moram no `@theme` do `src/index.css`, e cada cor de lá vira uma variável CSS (`--color-accent`) e uma classe (`bg-accent`, `text-accent`, `border-accent`). Um tema novo só sobrescreve essas variáveis num seletor `[data-theme="…"]`, então nenhum componente muda. O que o Tailwind não resolve bem fica em CSS puro, em `src/styles/`: o contador de linhas do `<Doc>` (`counter()`), a impressão do currículo e o `prefers-reduced-motion`.
 
 Escolhi React porque é o que mais aparece nas vagas de front e fullstack. Mas não quero que vire um app de tutorial cheio de biblioteca. O roteador por hash, o i18n, o shell e a busca eu escrevo na mão. Só coloco uma lib nova quando ela resolver algo que não vale a pena eu reimplementar.
 
@@ -89,7 +91,7 @@ No protótipo, o `cat` e o `grep` renderizavam a página escondida e liam o `inn
 | `context/` | `LangProvider`, `ThemeProvider`, `EditorProvider` (buffer aberto, abas, `runCommand`) |
 | `i18n/` | idioma atual (`?lang=`, depois `localStorage`, depois o navegador), `tr()`, `loc()`, `useLang()` |
 | `data/` | perfil, stack, projetos, contatos e produtos, tudo tipado |
-| `themes/` | 3 ou 4 temas, cada um um mapa de variáveis CSS |
+| `themes/` | lista dos temas (id e nome em `{ pt, en }`) para o seletor; as variáveis de cada um ficam no CSS, em `[data-theme="…"]` |
 | `services/github.ts` | API pública do GitHub com cache de 15 min no `sessionStorage` |
 | `services/api.ts` | cliente da minha API: timeout, health check, plano B e escolha da implementação |
 | `terminal/` | parser, FS virtual, `resolvePath()`, comandos, pipes, Tab (TS puro) |
@@ -137,7 +139,8 @@ LordCarvel.github.io/
 │   ├── components/  context/  hooks/
 │   ├── core/  i18n/  data/  themes/  services/
 │   ├── terminal/  palette/  demos/  pages/
-│   └── styles/                base, layout, temas, impressão
+│   ├── index.css              @import "tailwindcss", @theme (cores) e temas
+│   └── styles/                CSS puro: contador do <Doc>, impressão, movimento reduzido
 ├── *.test.ts ao lado do código testado
 ├── eslint.config.js
 ├── vite.config.ts             base: '/' (padrão)
@@ -153,8 +156,8 @@ Cada etapa termina com algo funcionando, e eu faço um commit no fim de cada uma
 **F1. Projeto e deploy.** ✅ Vite com o template `react-ts` e ESLint, `.gitattributes` com `eol=lf`, Vitest com um teste bobo e o workflow do Pages publicando um "olá".
 - Conferir: o push na `main` passa por lint, teste e build, e publica sozinho.
 
-**F2. Moldura e cores.** Os componentes `Tabs`, `FileTree`, `Editor`, `Terminal` e `StatusBar`, com dados escritos à mão. CSS Grid com `grid-template-areas` e `height: 100dvh`. Todas as cores em `:root`.
-- Conferir: só o editor rola, a página não. Trocar `--accent` no DevTools muda tudo que é verde.
+**F2. Moldura e cores.** Os componentes `Tabs`, `FileTree`, `Editor`, `Terminal` e `StatusBar`, com dados escritos à mão. Tailwind instalado (`tailwindcss` + `@tailwindcss/vite`). CSS Grid com `grid-template-areas` e `height: 100dvh`. Todas as cores no `@theme`, com a paleta do README do GitHub.
+- Conferir: só o editor rola, a página não. Trocar `--color-accent` no DevTools muda tudo que é verde.
 
 **F3. Dados tipados e i18n básico.** `Localized<T>`, a pasta `data/` com perfil, stack e projetos, mais `tr()` e `loc()`. Os textos já nascem nas duas línguas.
 - Conferir: o TypeScript reclama se faltar o `en` em algum campo.
