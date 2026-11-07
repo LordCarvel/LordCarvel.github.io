@@ -2,7 +2,7 @@ function Main() {
 
   return (
     <>
-        <h1>Hello, World!</h1>
+        <h1 className="p-4 text-accent">Hello, World!</h1>
     </>
   )
 }
