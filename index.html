@@ -5,16 +5,48 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- Regra 6: o essencial fica aqui, para LinkedIn, WhatsApp e Google lerem sem rodar JS.
+       Se mudar nome, cargo ou resumo em src/data/profile.ts, mude aqui também. -->
+  <title>Carvel · Desenvolvimento backend com Java</title>
+  <meta name="description"
+    content="Portfolio do Carvel, desenvolvedor backend Java em Penha, SC. Projetos, stack e contato. / Carvel's portfolio, Java backend developer." />
+  <meta name="author" content="Carvel" />
+  <meta name="theme-color" content="#1b251b" />
+  <link rel="canonical" href="https://lordcarvel.github.io/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://lordcarvel.github.io/" />
+  <meta property="og:site_name" content="Carvel" />
+  <meta property="og:title" content="Carvel · Desenvolvimento backend com Java" />
+  <meta property="og:description"
+    content="Java, dados e aplicações para o dia a dia. Projetos, stack e contato num editor interativo." />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <!-- TODO (Melhorias do guia): og:image com public/og-image.png, 1200x630, URL absoluta. -->
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23101610'/%3E%3Ctext x='6' y='23' font-family='monospace' font-size='18' font-weight='700' fill='%23a7d88b'%3E%3E_%3C/text%3E%3C/svg%3E" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,800;1,400&display=swap"
     rel="stylesheet" />
-
-  <title>Carvel.MD</title>
 </head>
 
 <body>
-  <div id="root"></div>
+  <!-- Conteúdo estático: aparece para robôs e para quem está sem JS.
+       O React substitui tudo dentro do #root assim que carrega. -->
+  <div id="root">
+    <main style="max-width: 60ch; margin: 0 auto; padding: 2rem 1rem; font-family: monospace;">
+      <h1>Carvel</h1>
+      <p>Desenvolvimento backend com Java · Penha, SC</p>
+      <p>Java, dados e aplicações para o dia a dia. Busco vagas de desenvolvimento backend com Java.</p>
+      <p>Projetos: Cdatra (persistência em Java), Easy Hub (operação de pedidos), Delivery Board, Finally Storage e
+        MeuCardapio OpsBot.</p>
+      <p><a href="https://github.com/LordCarvel">github.com/LordCarvel</a></p>
+    </main>
+  </div>
   <script type="module" src="/src/App.tsx"></script>
 </body>
 
