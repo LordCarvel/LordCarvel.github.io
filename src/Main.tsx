@@ -1,10 +1,12 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Doc from './components/Doc'
 import Editor from './components/Editor'
 import FileTree from './components/FileTree'
+import Palette from './components/Palette'
 import StatusBar from './components/StatusBar'
 import Tabs, { type TabItem } from './components/Tabs'
 import Terminal from './components/Terminal'
+import { isPaletteKey } from './core/shortcuts'
 import { buildTree, iconFor } from './core/tree'
 import { frame } from './data/frame'
 import { shortcuts } from './data/home'
@@ -16,6 +18,18 @@ function Main() {
   const { lang, setLang, loc } = useLang()
   const { registry, buffer, tabs, close } = useEditor()
   useShortcutKeys(shortcuts)
+  const [paletteOpen, setPaletteOpen] = useState(false)
+
+  // Ctrl+K / Cmd+K abre e fecha a busca, de qualquer lugar.
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (!isPaletteKey(e)) return
+      e.preventDefault() // no Chrome, Ctrl+K iria para a barra de busca do navegador
+      setPaletteOpen((open) => !open)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
 
   // A árvore só muda se o registro mudar: useMemo evita remontar a cada render.
   const tree = useMemo(() => buildTree(registry.all()), [registry])
@@ -50,6 +64,8 @@ function Main() {
           <button
             type="button"
             aria-label={loc(frame.searchAria)}
+            aria-haspopup="dialog"
+            onClick={() => setPaletteOpen(true)}
             className="flex cursor-pointer items-center gap-2 rounded-md border border-line bg-bg py-0.75 pr-1.5 pl-2.5 text-muted hover:border-accent hover:text-fg"
           >
             <span aria-hidden="true">⌕</span>
@@ -79,9 +95,11 @@ function Main() {
       {/* key: trocar de página recria o editor e a rolagem volta ao topo */}
       <Editor key={buffer.id}>{buffer.Component ? <buffer.Component /> : <Doc lines={lines} />}</Editor>
 
-      <Terminal title={frame.terminal} prompt={frame.prompt} placeholder={loc(frame.termPh)} />
+      <Terminal title={frame.terminal} placeholder={loc(frame.termPh)} />
 
       <StatusBar mode={frame.mode} branch={frame.branch} path={path} lines={lines.length} />
+
+      {paletteOpen && <Palette onClose={() => setPaletteOpen(false)} />}
     </div>
   )
 }
