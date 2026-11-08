@@ -1,13 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 import { lineText } from '../core/buffer'
 import { HOME, registry } from '../pages/index'
-import { commands, findCommand, runLine, type CommandContext } from './commands'
-
-function fakeCtx(extra: Partial<CommandContext> = {}): CommandContext {
-  return { lang: 'pt', registry, open: vi.fn(), setLang: vi.fn(), cmdHistory: [], ...extra }
-}
-
-const text = (input: string, ctx = fakeCtx()) => runLine(input, ctx).lines.map(lineText)
+import { commands, findCommand, runLine } from './commands'
+import { fakeCtx, run as text } from './testing'
 
 describe('findCommand', () => {
   it('acha pelo nome em pt, em en e pelo apelido, sem diferenciar maiúscula', () => {
@@ -46,7 +41,7 @@ describe('runLine', () => {
 
   it('todo comando de página aponta para um buffer que existe', () => {
     const ctx = fakeCtx()
-    for (const c of commands) c.run([], ctx)
+    for (const c of commands.filter((c) => c.group === 'portfolio')) c.run([], ctx)
     for (const [id] of vi.mocked(ctx.open).mock.calls) expect(registry.has(id), id).toBe(true)
     expect(ctx.open).toHaveBeenCalledWith(HOME)
   })
@@ -74,5 +69,21 @@ describe('runLine', () => {
 
   it('clear pede para limpar a tela', () => {
     expect(runLine('clear', fakeCtx()).clear).toBe(true)
+  })
+})
+
+describe('theme', () => {
+  it('sem nome lista os temas, cada um clicável, com * no atual', () => {
+    const result = runLine('theme', fakeCtx({ theme: 'tokyo-night' }))
+    const runs = result.lines.flatMap((l) => l.flatMap((span) => (span.run ? [span.run] : [])))
+    expect(runs).toContain('theme gruvbox-dark')
+    expect(result.lines.map(lineText).find((t) => t.startsWith('*'))).toContain('tokyo-night')
+  })
+
+  it('com nome troca o tema; nome errado avisa', () => {
+    const ctx = fakeCtx()
+    expect(text('tema Tokyo-Night', ctx)).toEqual(['tema: tokyo-night'])
+    expect(ctx.setTheme).toHaveBeenCalledWith('tokyo-night')
+    expect(text('theme dracula')).toEqual(['theme: dracula: tema desconhecido'])
   })
 })

@@ -14,6 +14,7 @@ const KIND_CLASS: Record<SpanKind, string> = {
   str: 'text-accent',
   kw: 'text-violet',
   prop: 'text-blue',
+  match: 'rounded-xs bg-warm/35 text-fg',
 }
 
 /** Desenha os trechos de uma linha: texto, link ou comando. Usado no <Doc> e no terminal. */
@@ -21,15 +22,16 @@ function LineView({ line }: { line: Line }) {
   return (
     <>
       {line.map((span, i) => {
+        const className = KIND_CLASS[span.kind ?? 'plain'] || undefined
+
         if (span.run) {
           return (
-            <Cmd key={i} run={span.run}>
+            <Cmd key={i} run={span.run} className={span.kind ? className : undefined}>
               {span.text}
             </Cmd>
           )
         }
 
-        const className = KIND_CLASS[span.kind ?? 'plain'] || undefined
         if (!span.href) {
           return (
             <span key={i} className={className}>

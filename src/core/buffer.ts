@@ -13,6 +13,8 @@ export type SpanKind =
   | 'str'
   | 'kw'
   | 'prop'
+  /** Trecho encontrado pelo grep. */
+  | 'match'
 
 /**
  * Um trecho de texto com cor, link ou comando.
@@ -55,9 +57,12 @@ export function a(text: string, href: string): Span {
   return { text, href }
 }
 
-/** Trecho clicável que roda um comando (regra 1: tudo que se digita também se clica). */
-export function cmd(command: string, text = command): Span {
-  return { text, run: command }
+/**
+ * Trecho clicável que roda um comando (regra 1: tudo que se digita também se clica).
+ * Sem `kind`, vira um botão com moldura; com `kind`, um texto colorido clicável (ex.: pastas no ls).
+ */
+export function cmd(command: string, text = command, kind?: SpanKind): Span {
+  return kind ? { text, run: command, kind } : { text, run: command }
 }
 
 /** Monta uma linha; string solta vira trecho sem cor. */

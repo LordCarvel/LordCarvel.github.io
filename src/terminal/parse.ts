@@ -33,3 +33,34 @@ export function tokenize(input: string): string[] {
   if (started) args.push(current)
   return args
 }
+
+/**
+ * Separa um pipeline em etapas: `grep java | head -3` → [['grep','java'], ['head','-3']].
+ * O | dentro de aspas ou escapado (\|) é texto, não separador. Etapas vazias somem.
+ */
+export function parsePipeline(input: string): string[][] {
+  const stages: string[] = []
+  let current = ''
+  let quote: '"' | "'" | null = null
+
+  for (let i = 0; i < input.length; i++) {
+    const ch = input[i]
+    if (ch === '\\' && quote !== "'" && i + 1 < input.length) {
+      current += ch + input[++i] // mantém o escape: o tokenize resolve depois
+    } else if (quote) {
+      if (ch === quote) quote = null
+      current += ch
+    } else if (ch === '"' || ch === "'") {
+      quote = ch
+      current += ch
+    } else if (ch === '|') {
+      stages.push(current)
+      current = ''
+    } else {
+      current += ch
+    }
+  }
+  stages.push(current)
+
+  return stages.map(tokenize).filter((argv) => argv.length > 0)
+}

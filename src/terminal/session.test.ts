@@ -5,8 +5,12 @@ import { MAX_ENTRIES, emptySession, record } from './session'
 describe('record', () => {
   it('adiciona a entrada e o comando ao histórico', () => {
     const s = record(emptySession, 'echo oi', [line('oi')])
-    expect(s.entries).toEqual([{ id: 1, input: 'echo oi', lines: [line('oi')] }])
+    expect(s.entries).toEqual([{ id: 1, prompt: '~ $', input: 'echo oi', lines: [line('oi')] }])
     expect(s.cmdHistory).toEqual(['echo oi'])
+  })
+
+  it('guarda o prompt da hora do comando', () => {
+    expect(record(emptySession, 'ls', [], { prompt: '~/projetos $' }).entries[0].prompt).toBe('~/projetos $')
   })
 
   it('ids crescem a cada entrada', () => {

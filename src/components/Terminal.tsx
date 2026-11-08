@@ -8,7 +8,7 @@ import { browseHistory } from '../terminal/history'
 import Cmd from './Cmd'
 import LineView from './LineView'
 
-type Props = { title: string; prompt: string; placeholder: string }
+type Props = { title: string; placeholder: string }
 
 /** Teclas que levam o foco ao terminal, de qualquer lugar da página. */
 const FOCUS_KEYS = [
@@ -16,9 +16,10 @@ const FOCUS_KEYS = [
   { key: '/', target: 'terminal' },
 ]
 
-function Terminal({ title, prompt, placeholder }: Props) {
+function Terminal({ title, placeholder }: Props) {
   const { loc } = useLang()
-  const { session, runCommand, cancel, clear } = useTerminal()
+  const { session, cwdPath, runCommand, cancel, clear, complete } = useTerminal()
+  const prompt = `${cwdPath} $`
   const [input, setInput] = useState('')
   const [cursor, setCursor] = useState<number | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -64,6 +65,11 @@ function Terminal({ title, prompt, placeholder }: Props) {
       cancel(input)
       setInput('')
       setCursor(null)
+    } else if (e.key === 'Tab' && input.trim() !== '') {
+      // Só com algo digitado: com a linha vazia, o Tab segue movendo o foco (acessibilidade).
+      e.preventDefault()
+      setInput(complete(input).value)
+      setCursor(null)
     } else if (e.key === 'Escape') {
       inputRef.current?.blur()
     }
@@ -76,7 +82,7 @@ function Terminal({ title, prompt, placeholder }: Props) {
       <div className="flex items-center gap-3 border-b border-line py-0.75 pr-2 pl-4 text-[0.85em]">
         <span className="text-muted">{title}</span>
         <span className="ml-auto hidden text-muted md:inline">
-          <kbd>:</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>Ctrl L</kbd>
+          <kbd>:</kbd> <kbd>Tab</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>Ctrl L</kbd>
         </span>
       </div>
 
@@ -93,7 +99,7 @@ function Terminal({ title, prompt, placeholder }: Props) {
         {session.entries.map((entry) => (
           <div key={entry.id} className="py-px">
             <div>
-              <span className="text-accent">{prompt}</span> {entry.input}
+              <span className="text-accent">{entry.prompt}</span> {entry.input}
             </div>
             {entry.lines.map((l, i) => (
               <div key={i}>

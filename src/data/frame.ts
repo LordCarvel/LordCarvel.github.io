@@ -5,7 +5,6 @@ export const frame = {
   root: '~/carvel',
   branch: 'main',
   mode: 'NORMAL',
-  prompt: '~ $',
   terminal: 'terminal · carvel-sh',
   hire: { pt: '● disponível para vagas', en: '● open to work' },
   search: { pt: 'buscar', en: 'search' },

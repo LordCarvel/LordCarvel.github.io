@@ -5,7 +5,7 @@ export const activity = {
   loading: { pt: 'consultando o GitHub…', en: 'checking GitHub…' },
   unavailable: {
     pt: 'o GitHub não respondeu agora (sem internet ou limite de acesso); mostrando o que está salvo no site',
-    en: "GitHub didn't answer right now (offline or rate limited); showing what is stored on the site",
+    en: "GitHub didn't respond (offline or rate-limited); showing what's stored on the site",
   },
   last30: { pt: 'últimos 30 dias', en: 'last 30 days' },
   daysWithPush: { pt: 'dias com push', en: 'days with pushes' },

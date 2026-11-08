@@ -12,6 +12,16 @@
     content="Portfolio do Carvel, desenvolvedor backend Java em Penha, SC. Projetos, stack e contato. / Carvel's portfolio, Java backend developer." />
   <meta name="author" content="Carvel" />
   <meta name="theme-color" content="#1b251b" />
+
+  <!-- Aplica o tema salvo antes de o React carregar, para a tela não piscar com o tema padrão.
+       Mesma regra do detectTheme() em src/themes: salvo, senão o modo do sistema. -->
+  <script>
+    try {
+      var saved = localStorage.getItem('theme')
+      var light = window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches
+      document.documentElement.dataset.theme = saved || (light ? 'workspace-light' : 'workspace')
+    } catch (e) {}
+  </script>
   <link rel="canonical" href="https://lordcarvel.github.io/" />
 
   <meta property="og:type" content="website" />

@@ -50,7 +50,7 @@ export const projects: Project[] = [
     kicker: { pt: 'Operação de pedidos', en: 'Order operations' },
     pitch: {
       pt: 'Pedidos, comandas e uma operação mais organizada.',
-      en: 'Orders, kitchen tickets and a more organized operation.',
+      en: 'Orders, kitchen tickets and a smoother operation.',
     },
     points: {
       pt: [
@@ -90,7 +90,7 @@ export const projects: Project[] = [
     repo: 'Finally-Storage',
     title: 'Finally Storage',
     kicker: { pt: 'Caixa', en: 'Cash register' },
-    pitch: { pt: 'Conferência de valores e fechamento diário de caixa.', en: 'Daily cash register checks and closing.' },
+    pitch: { pt: 'Conferência de valores e fechamento diário de caixa.', en: 'Daily cash checks and end-of-day closing.' },
     points: {
       pt: ['Totais por entregador e divisão por forma de pagamento.', 'Cálculo automático do total do dia, salvo localmente.'],
       en: ['Totals per courier, split by payment method.', 'Automatic daily total, stored locally.'],

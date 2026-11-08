@@ -3,22 +3,51 @@ import Doc from './components/Doc'
 import Editor from './components/Editor'
 import FileTree from './components/FileTree'
 import Palette from './components/Palette'
+import ThemePicker from './components/ThemePicker'
 import StatusBar from './components/StatusBar'
 import Tabs, { type TabItem } from './components/Tabs'
 import Terminal from './components/Terminal'
-import { isPaletteKey } from './core/shortcuts'
+import { isPaletteKey, isTypingTarget, matchShortcut } from './core/shortcuts'
 import { buildTree, iconFor } from './core/tree'
 import { frame } from './data/frame'
 import { shortcuts } from './data/home'
+import { themeText } from './data/themes'
 import { useEditor } from './hooks/useEditor'
 import { useShortcutKeys } from './hooks/useShortcutKeys'
+import { useTerminal } from './hooks/useTerminal'
+import { useTheme } from './hooks/useTheme'
 import { useLang } from './i18n/useLang'
+import { THEMES } from './themes'
 
 function Main() {
   const { lang, setLang, loc } = useLang()
   const { registry, buffer, tabs, close } = useEditor()
   useShortcutKeys(shortcuts)
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const [themeOpen, setThemeOpen] = useState(false)
+  const { shown } = useTheme()
+  const { runCommand } = useTerminal()
+  const shownTheme = THEMES.find((t) => t.id === shown)
+
+  // Teclas soltas, fora de campo de texto: T abre os temas, ? lista os comandos.
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      const hit = matchShortcut(
+        { key: e.key, ctrlKey: e.ctrlKey, metaKey: e.metaKey, altKey: e.altKey, typing: isTypingTarget(document.activeElement) },
+        [
+          { key: 't', target: 'theme' },
+          { key: 'T', target: 'theme' },
+          { key: '?', target: 'help' },
+        ],
+      )
+      if (!hit) return
+      e.preventDefault()
+      if (hit === 'theme') setThemeOpen(true)
+      else runCommand('help')
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [runCommand])
 
   // Ctrl+K / Cmd+K abre e fecha a busca, de qualquer lugar.
   useEffect(() => {
@@ -97,9 +126,18 @@ function Main() {
 
       <Terminal title={frame.terminal} placeholder={loc(frame.termPh)} />
 
-      <StatusBar mode={frame.mode} branch={frame.branch} path={path} lines={lines.length} />
+      <StatusBar
+        mode={frame.mode}
+        branch={frame.branch}
+        path={path}
+        lines={lines.length}
+        themeName={shownTheme ? loc(shownTheme.name) : shown}
+        themeLabel={loc(themeText.statusAria)}
+        onThemeClick={() => setThemeOpen(true)}
+      />
 
       {paletteOpen && <Palette onClose={() => setPaletteOpen(false)} />}
+      {themeOpen && <ThemePicker onClose={() => setThemeOpen(false)} />}
     </div>
   )
 }

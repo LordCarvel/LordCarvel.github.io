@@ -1,5 +1,28 @@
 import { describe, expect, it } from 'vitest'
-import { tokenize } from './parse'
+import { parsePipeline, tokenize } from './parse'
+
+describe('parsePipeline', () => {
+  it('sem pipe é uma etapa só', () => {
+    expect(parsePipeline('ls -la')).toEqual([['ls', '-la']])
+  })
+
+  it('separa as etapas no |', () => {
+    expect(parsePipeline('grep java | head -3')).toEqual([
+      ['grep', 'java'],
+      ['head', '-3'],
+    ])
+  })
+
+  it('| dentro de aspas ou escapado é texto', () => {
+    expect(parsePipeline('grep "a|b" | wc')).toEqual([['grep', 'a|b'], ['wc']])
+    expect(parsePipeline('echo a\\|b')).toEqual([['echo', 'a|b']])
+  })
+
+  it('etapas vazias somem', () => {
+    expect(parsePipeline(' | ls ||')).toEqual([['ls']])
+    expect(parsePipeline('')).toEqual([])
+  })
+})
 
 describe('tokenize', () => {
   it('separa por espaços, ignorando sobras', () => {
