@@ -14,9 +14,13 @@ export function introLines(lang: Lang): Line[] {
     line(s(loc(profile.tagline, lang), 'muted')),
     BLANK,
     line(s('● ', 'accent'), loc(profile.lookingFor, lang), s(` · ${loc(profile.location, lang)}`, 'muted')),
-    BLANK,
-    line(s(loc(home.startHere, lang), 'comment')),
   ]
+}
+
+// Entre o intro e o "Por onde começar" fica a linha do GitHub (statsLine), ao vivo na tela.
+
+export function startLines(lang: Lang): Line[] {
+  return [BLANK, line(s(loc(home.startHere, lang), 'comment'))]
 }
 
 /** Versão em texto dos cartões: uma linha por atalho. */

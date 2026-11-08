@@ -1,5 +1,6 @@
 import type { EditorBuffer } from '../core/buffer'
 import { createRegistry } from '../core/registry'
+import { atividade } from './atividade'
 import { contato } from './contato'
 import { curriculo } from './curriculo'
 import { perfil } from './perfil'
@@ -8,7 +9,16 @@ import { sobre } from './sobre'
 import { stack } from './stack'
 
 /** Ordem daqui = ordem da árvore. Pasta antes dos arquivos dela. */
-export const pages: EditorBuffer[] = [perfil, sobre, stack, projetos, ...projectPages, curriculo, contato]
+export const pages: EditorBuffer[] = [
+  perfil,
+  sobre,
+  stack,
+  projetos,
+  ...projectPages,
+  atividade,
+  curriculo,
+  contato,
+]
 
 export const registry = createRegistry(pages)
 

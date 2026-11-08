@@ -1,16 +1,25 @@
 import { toHash } from '../core/router'
 import { home, shortcuts } from '../data/home'
+import { useAsync } from '../hooks/useAsync'
 import { useLang } from '../i18n/useLang'
-import { introLines, outroLines } from '../pages/perfilLines'
+import { statsLine } from '../pages/atividadeLines'
+import { introLines, outroLines, startLines } from '../pages/perfilLines'
+import { getRepos } from '../services/github'
 import Doc from './Doc'
 
 /** Página inicial: o texto do perfil com os 4 atalhos em cartões no meio. */
 function Home() {
   const { lang, loc } = useLang()
+  const repos = useAsync(getRepos)
+
+  const stats =
+    repos.status === 'loading'
+      ? statsLine(lang, 'loading', 0)
+      : statsLine(lang, repos.status === 'ok' ? repos.data : 'unavailable', repos.now)
 
   return (
     <>
-      <Doc lines={introLines(lang)} />
+      <Doc lines={[...introLines(lang), stats, ...startLines(lang)]} />
 
       {/* Os cartões ocupam o lugar das linhas de texto dos atalhos, então
           o contador pula a mesma quantidade e a numeração continua certa. */}
