@@ -15,5 +15,4 @@ export const frame = {
   treeAria: { pt: 'Arquivos do portfolio', en: 'Portfolio files' },
   close: { pt: 'Fechar', en: 'Close' },
   termPh: { pt: 'digite help (chega no F7)', en: 'type help (coming in F7)' },
-  soon: { pt: 'Esta página chega no F5.', en: 'This page arrives in F5.' },
 } satisfies Record<string, string | Localized>

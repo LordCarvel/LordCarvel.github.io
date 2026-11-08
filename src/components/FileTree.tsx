@@ -4,12 +4,11 @@ import { useLang } from '../i18n/useLang'
 type Props = {
   nodes: TreeNode[]
   active: string
-  onOpen: (id: string) => void
   /** Uso interno da recursão: true quando a lista está dentro de uma pasta. */
   nested?: boolean
 }
 
-function FileTree({ nodes, active, onOpen, nested = false }: Props) {
+function FileTree({ nodes, active, nested = false }: Props) {
   const { loc } = useLang()
 
   return (
@@ -23,7 +22,6 @@ function FileTree({ nodes, active, onOpen, nested = false }: Props) {
             <a
               href={`#/${node.id}`}
               aria-current={isActive ? 'page' : undefined}
-              onClick={() => onOpen(node.id)}
               className={`flex items-center gap-2.5 py-0.75 whitespace-nowrap hover:bg-hl hover:no-underline ${
                 nested ? 'pr-4 pl-2' : 'px-4'
               } ${isActive ? 'bg-hl text-accent shadow-[inset_2px_0_0_var(--color-accent)]' : 'text-fg'}`}
@@ -37,7 +35,7 @@ function FileTree({ nodes, active, onOpen, nested = false }: Props) {
               {loc(node.name)}
             </a>
 
-            {node.children && <FileTree nodes={node.children} active={active} onOpen={onOpen} nested />}
+            {node.children && <FileTree nodes={node.children} active={active} nested />}
           </li>
         )
       })}

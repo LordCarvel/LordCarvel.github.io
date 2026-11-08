@@ -3,14 +3,13 @@ export type TabItem = { id: string; name: string; icon: string }
 type Props = {
   tabs: TabItem[]
   active: string
-  onSelect: (id: string) => void
   onClose: (id: string) => void
   /** aria-label da lista e prefixo do botão de fechar ("Fechar perfil.md"). */
   label: string
   closeLabel: string
 }
 
-function Tabs({ tabs, active, onSelect, onClose, label, closeLabel }: Props) {
+function Tabs({ tabs, active, onClose, label, closeLabel }: Props) {
   const closable = tabs.length > 1
 
   return (
@@ -28,7 +27,6 @@ function Tabs({ tabs, active, onSelect, onClose, label, closeLabel }: Props) {
             <a
               href={`#/${tab.id}`}
               aria-current={isActive ? 'page' : undefined}
-              onClick={() => onSelect(tab.id)}
               className={`flex items-center gap-2 py-1.75 pr-1 pl-3 hover:text-fg hover:no-underline ${
                 isActive ? 'text-fg' : 'text-muted'
               }`}

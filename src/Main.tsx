@@ -1,45 +1,34 @@
-import { useState } from 'react'
+import { useEffect, useMemo } from 'react'
+import Doc from './components/Doc'
 import Editor from './components/Editor'
 import FileTree from './components/FileTree'
 import StatusBar from './components/StatusBar'
 import Tabs, { type TabItem } from './components/Tabs'
 import Terminal from './components/Terminal'
-import { closeTab, openTab } from './core/tabs'
-import { findNode } from './core/tree'
-import { files } from './data/files'
+import { buildTree, iconFor } from './core/tree'
 import { frame } from './data/frame'
-import { profile } from './data/profile'
+import { useEditor } from './hooks/useEditor'
 import { useLang } from './i18n/useLang'
 
 function Main() {
   const { lang, setLang, loc } = useLang()
-  const [tabs, setTabs] = useState<string[]>(['perfil'])
-  const [current, setCurrent] = useState('perfil')
+  const { registry, buffer, tabs, close } = useEditor()
 
-  function open(id: string) {
-    setTabs((t) => openTab(t, id))
-    setCurrent(id)
-  }
-
-  function close(id: string) {
-    const next = closeTab(tabs, id, current)
-    setTabs(next.tabs)
-    setCurrent(next.current)
-  }
+  // A árvore só muda se o registro mudar: useMemo evita remontar a cada render.
+  const tree = useMemo(() => buildTree(registry.all()), [registry])
 
   const tabItems: TabItem[] = tabs.flatMap((id) => {
-    const node = findNode(files, id)
-    return node ? [{ id: node.id, name: loc(node.name), icon: node.icon }] : []
+    const b = registry.get(id)
+    return b ? [{ id: b.id, name: loc(b.name), icon: iconFor(b.name.pt) }] : []
   })
 
-  const currentNode = findNode(files, current)
-  const currentName = currentNode ? loc(currentNode.name) : current
+  const fileName = loc(buffer.name)
+  const path = buffer.dir ? `${frame.root}/${loc(registry.get(buffer.dir)!.name)}${fileName}` : `${frame.root}/${fileName}`
+  const lines = buffer.lines(lang)
 
-  // Provisório até o F4/F5: só o perfil tem conteúdo, e ele já vem de src/data.
-  const lines =
-    current === 'perfil'
-      ? [`${profile.name} · ${loc(profile.role)}`, loc(profile.tagline), '', ...loc(profile.about)]
-      : [loc(frame.soon)]
+  useEffect(() => {
+    document.title = `${fileName} · Carvel`
+  }, [fileName])
 
   return (
     <div className="frame">
@@ -49,8 +38,7 @@ function Main() {
         </span>
         <Tabs
           tabs={tabItems}
-          active={current}
-          onSelect={setCurrent}
+          active={buffer.id}
           onClose={close}
           label={loc(frame.tabsAria)}
           closeLabel={loc(frame.close)}
@@ -80,28 +68,17 @@ function Main() {
       <aside className="hidden min-h-0 flex-col overflow-auto border-r border-line bg-panel-2 [grid-area:side] md:flex">
         <div className="px-3.5 pt-3 pb-1.5 text-[0.82em] tracking-[0.08em] text-muted uppercase">{frame.root}</div>
         <nav aria-label={loc(frame.treeAria)}>
-          <FileTree nodes={files} active={current} onOpen={open} />
+          <FileTree nodes={tree} active={buffer.id} />
         </nav>
         <div className="mt-auto border-t border-line px-4 py-3.5 text-[0.85em] text-accent">{loc(frame.hire)}</div>
       </aside>
 
-      <Editor>
-        <h1 className="mb-4 text-accent"># {currentName}</h1>
-        {lines.map((line, i) => (
-          <p key={i} className="min-h-[1.6em]">
-            {line}
-          </p>
-        ))}
-      </Editor>
+      {/* key: trocar de página recria o editor e a rolagem volta ao topo */}
+      <Editor key={buffer.id}>{buffer.Component ? <buffer.Component /> : <Doc lines={lines} />}</Editor>
 
       <Terminal title={frame.terminal} prompt={frame.prompt} placeholder={loc(frame.termPh)} />
 
-      <StatusBar
-        mode={frame.mode}
-        branch={frame.branch}
-        path={`${frame.root}/${currentName}`}
-        lines={lines.length}
-      />
+      <StatusBar mode={frame.mode} branch={frame.branch} path={path} lines={lines.length} />
     </div>
   )
 }
