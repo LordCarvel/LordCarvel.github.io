@@ -14,5 +14,5 @@ export const frame = {
   tabsAria: { pt: 'Arquivos abertos', en: 'Open files' },
   treeAria: { pt: 'Arquivos do portfolio', en: 'Portfolio files' },
   close: { pt: 'Fechar', en: 'Close' },
-  termPh: { pt: 'digite help (chega no F7)', en: 'type help (coming in F7)' },
+  termPh: { pt: 'digite help ou clique abaixo', en: 'type help or click below' },
 } satisfies Record<string, string | Localized>

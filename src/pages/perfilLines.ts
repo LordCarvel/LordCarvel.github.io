@@ -1,4 +1,4 @@
-import { BLANK, a, line, s, type Line } from '../core/buffer'
+import { BLANK, a, cmd, line, s, type Line } from '../core/buffer'
 import { toHash } from '../core/router'
 import { home, shortcuts } from '../data/home'
 import { profile } from '../data/profile'
@@ -31,5 +31,9 @@ export function shortcutLines(lang: Lang): Line[] {
 }
 
 export function outroLines(lang: Lang): Line[] {
-  return [BLANK, line(s(loc(home.keysHint, lang), 'comment'))]
+  return [
+    BLANK,
+    line(s(`${loc(home.preferTyping, lang)} `, 'comment'), cmd('help'), ' ', cmd('whoami'), ' ', cmd('history')),
+    line(s(loc(home.keysHint, lang), 'comment')),
+  ]
 }

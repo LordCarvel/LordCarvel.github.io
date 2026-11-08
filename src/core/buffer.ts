@@ -14,8 +14,11 @@ export type SpanKind =
   | 'kw'
   | 'prop'
 
-/** Um trecho de texto com cor ou link. `href` com '#/' é rota interna. */
-export type Span = { text: string; kind?: SpanKind; href?: string }
+/**
+ * Um trecho de texto com cor, link ou comando.
+ * `href` com '#/' é rota interna; `run` vira um botão que roda o comando no terminal.
+ */
+export type Span = { text: string; kind?: SpanKind; href?: string; run?: string }
 
 /** Uma linha do documento. Lista vazia = linha em branco. */
 export type Line = Span[]
@@ -50,6 +53,11 @@ export function s(text: string, kind: SpanKind = 'plain'): Span {
 /** Trecho com link. */
 export function a(text: string, href: string): Span {
   return { text, href }
+}
+
+/** Trecho clicável que roda um comando (regra 1: tudo que se digita também se clica). */
+export function cmd(command: string, text = command): Span {
+  return { text, run: command }
 }
 
 /** Monta uma linha; string solta vira trecho sem cor. */

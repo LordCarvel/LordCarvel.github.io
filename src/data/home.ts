@@ -40,5 +40,12 @@ export const shortcuts: Shortcut[] = [
 export const home = {
   shortcutsAria: { pt: 'Atalhos', en: 'Shortcuts' },
   startHere: { pt: '## Por onde começar', en: '## Where to start' },
-  keysHint: { pt: '// as teclas 1 a 4 também abrem os atalhos', en: '// keys 1 to 4 open the shortcuts too' },
+  preferTyping: {
+    pt: '// prefere digitar? o terminal aqui embaixo entende comandos:',
+    en: '// prefer typing? the terminal below understands commands:',
+  },
+  keysHint: {
+    pt: '// 1 a 4 abrem os atalhos · : ou / foca o terminal',
+    en: '// 1 to 4 open the shortcuts · : or / focuses the terminal',
+  },
 } satisfies Record<string, Localized>
