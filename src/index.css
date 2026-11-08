@@ -21,29 +21,84 @@
   --breakpoint-md: 45rem;
 }
 
+/*
+ * Temas: cada um só sobrescreve as variáveis do @theme.
+ * O workspace repete os valores do @theme de propósito: assim um elemento com
+ * data-theme="workspace" mostra as cores certas mesmo dentro de outro tema
+ * (é o que faz as amostras do seletor funcionarem). O teste themes.test.ts
+ * confere que os dois blocos batem e que todo tema passa no contraste AA.
+ */
+[data-theme="workspace"] {
+  color-scheme: dark;
+  --color-bg: #101610;
+  --color-panel: #1b251b;
+  --color-panel-2: #141d14;
+  --color-line: #354333;
+  --color-hl: #1a2419;
+  --color-fg: #e7e6df;
+  --color-muted: #9caa99;
+  --color-accent: #a7d88b;
+  --color-accent-ink: #101610;
+  --color-warm: #e6bc80;
+  --color-blue: #8fbcd4;
+  --color-err: #e08a7a;
+  --color-violet: #c3a6e0;
+}
+
 [data-theme="workspace-light"] {
+  color-scheme: light;
   --color-bg: #f5f2e8;
   --color-panel: #e9e4d3;
   --color-panel-2: #efebdd;
   --color-line: #cdc6af;
   --color-hl: #ebe6d6;
   --color-fg: #22281f;
-  --color-muted: #646f5f;
-  --color-accent: #3f7a2b;
+  --color-muted: #5a6555;
+  --color-accent: #3a7027;
   --color-accent-ink: #f5f2e8;
-  --color-warm: #9a5c10;
-  --color-blue: #2c6a8a;
-  --color-err: #b2412f;
+  --color-warm: #8a520e;
+  --color-blue: #2a6584;
+  --color-err: #a83c2b;
   --color-violet: #7a4fa8;
+}
+
+[data-theme="tokyo-night"] {
+  color-scheme: dark;
+  --color-bg: #1a1b26;
+  --color-panel: #16161e;
+  --color-panel-2: #1f2030;
+  --color-line: #292e42;
+  --color-hl: #24283b;
+  --color-fg: #c0caf5;
+  --color-muted: #8f98c2;
+  --color-accent: #9ece6a;
+  --color-accent-ink: #1a1b26;
+  --color-warm: #e0af68;
+  --color-blue: #7aa2f7;
+  --color-err: #f7768e;
+  --color-violet: #bb9af7;
+}
+
+[data-theme="gruvbox-dark"] {
+  color-scheme: dark;
+  --color-bg: #282828;
+  --color-panel: #1d2021;
+  --color-panel-2: #232323;
+  --color-line: #504945;
+  --color-hl: #32302f;
+  --color-fg: #ebdbb2;
+  --color-muted: #a89984;
+  --color-accent: #b8bb26;
+  --color-accent-ink: #282828;
+  --color-warm: #fabd2f;
+  --color-blue: #83a598;
+  --color-err: #fc6857;
+  --color-violet: #d3869b;
 }
 
 @layer base {
   :root {
     color-scheme: dark;
-  }
-
-  [data-theme="workspace-light"] {
-    color-scheme: light;
   }
 
   html,
