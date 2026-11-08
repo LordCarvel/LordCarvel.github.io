@@ -7,12 +7,15 @@ import Tabs, { type TabItem } from './components/Tabs'
 import Terminal from './components/Terminal'
 import { buildTree, iconFor } from './core/tree'
 import { frame } from './data/frame'
+import { shortcuts } from './data/home'
 import { useEditor } from './hooks/useEditor'
+import { useShortcutKeys } from './hooks/useShortcutKeys'
 import { useLang } from './i18n/useLang'
 
 function Main() {
   const { lang, setLang, loc } = useLang()
   const { registry, buffer, tabs, close } = useEditor()
+  useShortcutKeys(shortcuts)
 
   // A árvore só muda se o registro mudar: useMemo evita remontar a cada render.
   const tree = useMemo(() => buildTree(registry.all()), [registry])

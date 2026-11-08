@@ -4,8 +4,19 @@
  * no texto copiado, nem no que o leitor de tela lê.
  */
 @layer components {
-  .doc {
+  /* O contador zera no editor, não em cada <Doc>: assim uma página feita de
+     vários pedaços (texto, cartões, texto) continua a numeração. */
+  .doc-root {
     counter-reset: ln;
+  }
+
+  /* Alinha um bloco que não é linha (ex.: os cartões do perfil) com o texto. */
+  .doc-indent {
+    margin-left: calc(3ch + 1.2ch);
+
+    @variant md {
+      margin-left: calc(4.5ch + 2ch);
+    }
   }
 
   .ln {
