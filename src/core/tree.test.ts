@@ -1,31 +1,35 @@
 import { describe, expect, it } from 'vitest'
-import { findNode, iconFor, type TreeNode } from './tree'
+import type { EditorBuffer } from './buffer'
+import { buildTree, iconFor } from './tree'
 
-const tree: TreeNode[] = [
-  { id: 'perfil', name: { pt: 'perfil.md', en: 'profile.md' }, icon: '#' },
-  {
-    id: 'projetos',
-    name: { pt: 'projetos/', en: 'projects/' },
-    icon: '▾',
-    children: [{ id: 'cdatra', name: { pt: 'Cdatra.java', en: 'Cdatra.java' }, icon: '☕' }],
-  },
-]
+function buffer(id: string, file: string, extra: Partial<EditorBuffer> = {}): EditorBuffer {
+  return { id, name: { pt: file, en: file }, title: { pt: id, en: id }, lines: () => [], ...extra }
+}
 
-describe('findNode', () => {
-  it('acha um nó na raiz', () => {
-    expect(findNode(tree, 'perfil')?.name.pt).toBe('perfil.md')
+describe('buildTree', () => {
+  const buffers = [
+    buffer('perfil', 'perfil.md'),
+    buffer('projetos', 'projetos/', { isDir: true }),
+    buffer('cdatra', 'Cdatra.java', { dir: 'projetos' }),
+    buffer('contato', 'contato.sh'),
+    buffer('easy-hub', 'EasyHub.jsx', { dir: 'projetos' }),
+  ]
+
+  it('na raiz ficam só os buffers sem pasta, na ordem de registro', () => {
+    expect(buildTree(buffers).map((n) => n.id)).toEqual(['perfil', 'projetos', 'contato'])
   })
 
-  it('acha a própria pasta', () => {
-    expect(findNode(tree, 'projetos')?.name.en).toBe('projects/')
+  it('a pasta recebe os filhos, mesmo registrados depois de outros arquivos', () => {
+    const dir = buildTree(buffers).find((n) => n.id === 'projetos')
+    expect(dir?.children?.map((n) => n.id)).toEqual(['cdatra', 'easy-hub'])
   })
 
-  it('acha um nó dentro de uma pasta', () => {
-    expect(findNode(tree, 'cdatra')?.icon).toBe('☕')
+  it('arquivo comum não tem children', () => {
+    expect(buildTree(buffers)[0].children).toBeUndefined()
   })
 
-  it('devolve undefined para um id que não existe', () => {
-    expect(findNode(tree, 'xyz')).toBeUndefined()
+  it('o ícone sai da extensão', () => {
+    expect(buildTree(buffers).map((n) => n.icon)).toEqual(['#', '▾', '$'])
   })
 })
 
