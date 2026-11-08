@@ -1,7 +1,9 @@
+import type { Localized } from '../i18n/lang'
+
 /** Nó da árvore de arquivos. Pastas têm `children`. */
 export type TreeNode = {
   id: string
-  name: string
+  name: Localized
   icon: string
   children?: TreeNode[]
 }
@@ -14,4 +16,21 @@ export function findNode(nodes: readonly TreeNode[], id: string): TreeNode | und
     if (found) return found
   }
   return undefined
+}
+
+const ICONS: Record<string, string> = {
+  md: '#',
+  toml: '⚙',
+  java: '☕',
+  jsx: '⚛',
+  js: 'ƒ',
+  sh: '$',
+  txt: '¶',
+}
+
+/** Ícone pela extensão do arquivo; pasta (termina em /) vira ▾. */
+export function iconFor(file: string): string {
+  if (file.endsWith('/')) return '▾'
+  const ext = file.includes('.') ? file.split('.').pop()!.toLowerCase() : ''
+  return ICONS[ext] ?? '·'
 }

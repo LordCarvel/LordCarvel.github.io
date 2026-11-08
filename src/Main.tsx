@@ -6,12 +6,13 @@ import Tabs, { type TabItem } from './components/Tabs'
 import Terminal from './components/Terminal'
 import { closeTab, openTab } from './core/tabs'
 import { findNode } from './core/tree'
-import { mockFrame, mockTree } from './data/mock'
-
-/** Linhas falsas só para testar a rolagem do editor (some no F4). */
-const FAKE_LINES = 80
+import { files } from './data/files'
+import { frame } from './data/frame'
+import { profile } from './data/profile'
+import { useLang } from './i18n/useLang'
 
 function Main() {
+  const { lang, setLang, loc } = useLang()
   const [tabs, setTabs] = useState<string[]>(['perfil'])
   const [current, setCurrent] = useState('perfil')
 
@@ -27,11 +28,18 @@ function Main() {
   }
 
   const tabItems: TabItem[] = tabs.flatMap((id) => {
-    const node = findNode(mockTree, id)
-    return node ? [{ id: node.id, name: node.name, icon: node.icon }] : []
+    const node = findNode(files, id)
+    return node ? [{ id: node.id, name: loc(node.name), icon: node.icon }] : []
   })
 
-  const currentName = findNode(mockTree, current)?.name ?? current
+  const currentNode = findNode(files, current)
+  const currentName = currentNode ? loc(currentNode.name) : current
+
+  // Provisório até o F4/F5: só o perfil tem conteúdo, e ele já vem de src/data.
+  const lines =
+    current === 'perfil'
+      ? [`${profile.name} · ${loc(profile.role)}`, loc(profile.tagline), '', ...loc(profile.about)]
+      : [loc(frame.soon)]
 
   return (
     <div className="frame">
@@ -39,41 +47,60 @@ function Main() {
         <span className="hidden self-center pr-1.5 pl-4 text-accent md:inline" aria-hidden="true">
           ▸
         </span>
-        <Tabs tabs={tabItems} active={current} onSelect={setCurrent} onClose={close} />
+        <Tabs
+          tabs={tabItems}
+          active={current}
+          onSelect={setCurrent}
+          onClose={close}
+          label={loc(frame.tabsAria)}
+          closeLabel={loc(frame.close)}
+        />
         <div className="flex items-center gap-1.5">
           <button
             type="button"
+            aria-label={loc(frame.searchAria)}
             className="flex cursor-pointer items-center gap-2 rounded-md border border-line bg-bg py-0.75 pr-1.5 pl-2.5 text-muted hover:border-accent hover:text-fg"
           >
             <span aria-hidden="true">⌕</span>
-            <span className="hidden md:inline">{mockFrame.search}</span>
+            <span className="hidden md:inline">{loc(frame.search)}</span>
             <kbd className="hidden md:inline">Ctrl K</kbd>
+          </button>
+          <button
+            type="button"
+            aria-label={loc(frame.langAria)}
+            onClick={() => setLang(lang === 'pt' ? 'en' : 'pt')}
+            className="cursor-pointer rounded-md border border-transparent px-2.25 py-0.5 text-[0.85em] tracking-[0.04em] text-muted hover:border-line hover:text-fg"
+          >
+            <span className={lang === 'pt' ? 'font-bold text-accent' : undefined}>PT</span>·
+            <span className={lang === 'en' ? 'font-bold text-accent' : undefined}>EN</span>
           </button>
         </div>
       </header>
 
       <aside className="hidden min-h-0 flex-col overflow-auto border-r border-line bg-panel-2 [grid-area:side] md:flex">
-        <div className="px-3.5 pt-3 pb-1.5 text-[0.82em] tracking-[0.08em] text-muted uppercase">{mockFrame.root}</div>
-        <nav>
-          <FileTree nodes={mockTree} active={current} onOpen={open} />
+        <div className="px-3.5 pt-3 pb-1.5 text-[0.82em] tracking-[0.08em] text-muted uppercase">{frame.root}</div>
+        <nav aria-label={loc(frame.treeAria)}>
+          <FileTree nodes={files} active={current} onOpen={open} />
         </nav>
-        <div className="mt-auto border-t border-line px-4 py-3.5 text-[0.85em] text-accent">{mockFrame.hire}</div>
+        <div className="mt-auto border-t border-line px-4 py-3.5 text-[0.85em] text-accent">{loc(frame.hire)}</div>
       </aside>
 
       <Editor>
         <h1 className="mb-4 text-accent"># {currentName}</h1>
-        {Array.from({ length: FAKE_LINES }, (_, i) => (
-          <p key={i}>linha {i + 1}</p>
+        {lines.map((line, i) => (
+          <p key={i} className="min-h-[1.6em]">
+            {line}
+          </p>
         ))}
       </Editor>
 
-      <Terminal title={mockFrame.terminal} prompt={mockFrame.prompt} />
+      <Terminal title={frame.terminal} prompt={frame.prompt} placeholder={loc(frame.termPh)} />
 
       <StatusBar
-        mode={mockFrame.mode}
-        branch={mockFrame.branch}
-        path={`${mockFrame.root}/${currentName}`}
-        lines={FAKE_LINES}
+        mode={frame.mode}
+        branch={frame.branch}
+        path={`${frame.root}/${currentName}`}
+        lines={lines.length}
       />
     </div>
   )

@@ -5,13 +5,16 @@ type Props = {
   active: string
   onSelect: (id: string) => void
   onClose: (id: string) => void
+  /** aria-label da lista e prefixo do botão de fechar ("Fechar perfil.md"). */
+  label: string
+  closeLabel: string
 }
 
-function Tabs({ tabs, active, onSelect, onClose }: Props) {
+function Tabs({ tabs, active, onSelect, onClose, label, closeLabel }: Props) {
   const closable = tabs.length > 1
 
   return (
-    <ul className="flex min-w-0 flex-1 overflow-x-auto [scrollbar-width:none]">
+    <ul aria-label={label} className="flex min-w-0 flex-1 overflow-x-auto [scrollbar-width:none]">
       {tabs.map((tab) => {
         const isActive = tab.id === active
 
@@ -39,7 +42,7 @@ function Tabs({ tabs, active, onSelect, onClose }: Props) {
             {closable && (
               <button
                 type="button"
-                aria-label={`Fechar ${tab.name}`}
+                aria-label={`${closeLabel} ${tab.name}`}
                 onClick={() => onClose(tab.id)}
                 className={`cursor-pointer pr-2.5 pl-1.5 text-muted group-hover:opacity-100 hover:text-err ${
                   isActive ? 'opacity-100' : 'opacity-50'

@@ -1,7 +1,7 @@
-type Props = { title: string; prompt: string }
+type Props = { title: string; prompt: string; placeholder: string }
 
 // Só a casca por enquanto: entrada, histórico e comandos chegam no F7.
-function Terminal({ title, prompt }: Props) {
+function Terminal({ title, prompt, placeholder }: Props) {
   return (
     <section aria-label="Terminal" className="flex flex-col border-t border-line bg-panel-2 text-[0.9em] [grid-area:term]">
       <div className="flex items-center gap-3 border-b border-line py-0.75 pr-2 pl-4 text-[0.85em]">
@@ -16,6 +16,7 @@ function Terminal({ title, prompt }: Props) {
           id="term-input"
           autoComplete="off"
           spellCheck={false}
+          placeholder={placeholder}
           className="min-w-0 flex-1 bg-transparent py-0.5 caret-accent outline-none placeholder:text-muted/60"
         />
       </div>

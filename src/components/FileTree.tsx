@@ -1,4 +1,5 @@
 import type { TreeNode } from '../core/tree'
+import { useLang } from '../i18n/useLang'
 
 type Props = {
   nodes: TreeNode[]
@@ -9,6 +10,8 @@ type Props = {
 }
 
 function FileTree({ nodes, active, onOpen, nested = false }: Props) {
+  const { loc } = useLang()
+
   return (
     <ul className={nested ? 'ml-5.5 border-l border-dashed border-line pl-3.5' : undefined}>
       {nodes.map((node) => {
@@ -31,7 +34,7 @@ function FileTree({ nodes, active, onOpen, nested = false }: Props) {
               >
                 {node.icon}
               </span>
-              {node.name}
+              {loc(node.name)}
             </a>
 
             {node.children && <FileTree nodes={node.children} active={active} onOpen={onOpen} nested />}
