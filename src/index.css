@@ -2,51 +2,96 @@
 
 @theme {
   --color-bg: #101610;
-  --color-surface: #1b251b;
-  --color-border: #354333;
+  --color-panel: #1b251b;
+  --color-panel-2: #141d14;
+  --color-line: #354333;
+  --color-hl: #1a2419;
   --color-fg: #e7e6df;
   --color-muted: #9caa99;
   --color-accent: #a7d88b;
-  --color-warn: #e6bc80;
+  --color-accent-ink: #101610;
+  --color-warm: #e6bc80;
+  --color-blue: #8fbcd4;
+  --color-err: #e08a7a;
+  --color-violet: #c3a6e0;
 
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+  --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, ui-monospace, monospace;
+
+  --breakpoint-md: 45rem;
 }
 
-[data-theme="light"] {
-  --color-bg: #f4f3ee;
-  --color-surface: #e7e6df;
-  --color-border: #c9cfc4;
-  --color-fg: #1b251b;
-  --color-muted: #55624f;
-  --color-accent: #3f7a2a;
-  --color-warn: #8a5a12;
+[data-theme="workspace-light"] {
+  --color-bg: #f5f2e8;
+  --color-panel: #e9e4d3;
+  --color-panel-2: #efebdd;
+  --color-line: #cdc6af;
+  --color-hl: #ebe6d6;
+  --color-fg: #22281f;
+  --color-muted: #646f5f;
+  --color-accent: #3f7a2b;
+  --color-accent-ink: #f5f2e8;
+  --color-warm: #9a5c10;
+  --color-blue: #2c6a8a;
+  --color-err: #b2412f;
+  --color-violet: #7a4fa8;
 }
 
 @layer base {
-  html, body, #root {
+  :root {
+    color-scheme: dark;
+  }
+
+  [data-theme="workspace-light"] {
+    color-scheme: light;
+  }
+
+  html,
+  body,
+  #root {
     height: 100dvh;
   }
 
   body {
-    @apply bg-bg text-fg font-mono antialiased;
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
+    @apply bg-bg text-fg font-mono antialiased overflow-hidden;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  a {
+    @apply text-blue hover:underline hover:underline-offset-3;
+  }
+
+  :focus-visible {
+    @apply rounded-[3px] outline-2 outline-offset-2 outline-accent;
+  }
+
+  ::selection {
+    @apply bg-accent text-accent-ink;
+  }
+
+  kbd {
+    @apply rounded border border-b-2 border-line bg-panel-2 px-[0.4em] text-[0.78em] text-muted;
   }
 }
 
-:root {
+@layer components {
+  .frame {
+    display: grid;
+    height: 100dvh;
+    grid-template:
+      "tabs"   auto
+      "editor" minmax(0, 1fr)
+      "term"   auto
+      "status" auto
+      / minmax(0, 1fr);
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-*,
-*::before,
-*::after {
-
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    @variant md {
+      grid-template:
+        "tabs   tabs"   auto
+        "side   editor" minmax(0, 1fr)
+        "side   term"   auto
+        "status status" auto
+        / 200px minmax(0, 1fr);
+    }
+  }
 }
