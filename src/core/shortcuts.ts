@@ -26,3 +26,11 @@ export function isTypingTarget(el: Element | null): boolean {
   const tag = el.tagName
   return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (el as HTMLElement).isContentEditable === true
 }
+
+/**
+ * Ctrl+K (ou Cmd+K no Mac) abre a busca. Funciona até dentro do terminal:
+ * é uma combinação, não rouba letra de quem digita.
+ */
+export function isPaletteKey(input: Pick<KeyInput, 'key' | 'ctrlKey' | 'metaKey' | 'altKey'>): boolean {
+  return (input.ctrlKey || input.metaKey) && !input.altKey && input.key.toLowerCase() === 'k'
+}

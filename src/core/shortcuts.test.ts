@@ -1,5 +1,21 @@
 import { describe, expect, it } from 'vitest'
-import { matchShortcut, type KeyInput } from './shortcuts'
+import { isPaletteKey, matchShortcut, type KeyInput } from './shortcuts'
+
+describe('isPaletteKey', () => {
+  const key = (k: string, extra: Partial<KeyInput> = {}) => ({ key: k, ctrlKey: false, metaKey: false, altKey: false, ...extra })
+
+  it('Ctrl+K e Cmd+K abrem a busca, com ou sem Shift (K maiúsculo)', () => {
+    expect(isPaletteKey(key('k', { ctrlKey: true }))).toBe(true)
+    expect(isPaletteKey(key('K', { ctrlKey: true }))).toBe(true)
+    expect(isPaletteKey(key('k', { metaKey: true }))).toBe(true)
+  })
+
+  it('k sozinho, Alt+Ctrl+K e outras letras não abrem', () => {
+    expect(isPaletteKey(key('k'))).toBe(false)
+    expect(isPaletteKey(key('k', { ctrlKey: true, altKey: true }))).toBe(false)
+    expect(isPaletteKey(key('j', { ctrlKey: true }))).toBe(false)
+  })
+})
 
 const shortcuts = [
   { key: '1', target: 'projetos' },
